@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI-Based Detection and Verification of Authentic, AI-Generated, and Manipulated Images</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 16px;
+            background: #f4f6f8;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+        }
+
+        .box {
+            max-width: 620px;
+            margin: auto;
+            padding: 32px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .08);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 1.6rem;
+        }
+
+        p {
+            color: #5b6472;
+        }
+
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            margin: 22px 0 14px;
+        }
+
+        button {
+            padding: 11px 18px;
+            border: 0;
+            border-radius: 8px;
+            background: #2563eb;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 26px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .preview {
+            display: block;
+            max-width: 100%;
+            max-height: 380px;
+            margin: 0 auto 18px;
+            border-radius: 8px;
+        }
+
+        .result p {
+            margin: 8px 0;
+        }
+
+        .error {
+            color: #b91c1c;
+        }
+
+        @media (max-width: 480px) {
+            .box {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="box">
+        <h1>AI Image Verification</h1>
+        <p>Upload an image to see whether it is real, AI-generated, or manipulated.</p>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Upload Image</button>
+        </form>
+        {% if prediction %}
+        <section class="result">
+            {% if image_url %}<img class="preview" src="{{ image_url }}" alt="Uploaded image">{% endif %}
+            {% if prediction == "Error" %}
+            <p class="error"><strong>Error:</strong> {{ confidence }}</p>
+            {% else %}
+            <p><strong>Prediction:</strong> {{ prediction }}</p>
+            <p><strong>Confidence:</strong> {{ confidence }}</p>
+            {% endif %}
+        </section>
+        {% endif %}
+    </main>
+</body>
+
+</html>

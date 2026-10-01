@@ -1,0 +1,28 @@
+{
+  "model": "results\\best_model.pth",
+  "dataset_manifest": "data\\processed\\dataset_manifest.csv",
+  "test_images": 900,
+  "jpeg_quality": 60,
+  "results": {
+    "original": {
+      "correct": 742,
+      "total": 900,
+      "accuracy": 0.8244444444444444
+    },
+    "cropped": {
+      "correct": 736,
+      "total": 900,
+      "accuracy": 0.8177777777777778
+    },
+    "resized": {
+      "correct": 742,
+      "total": 900,
+      "accuracy": 0.8244444444444444
+    },
+    "jpeg_compressed": {
+      "correct": 616,
+      "total": 900,
+      "accuracy": 0.6844444444444444
+    }
+  }
+}

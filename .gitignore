@@ -1,0 +1,33 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.log
+
+# Virtual environment
+venv/
+.venv/
+
+# Datasets and generated image data
+data/raw/
+data/processed/
+*.zip
+
+# Model checkpoints and downloaded pretrained weights
+*.pth
+*.pt
+*.ckpt
+.torch_cache/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Editor and operating-system files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
