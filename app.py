@@ -2,12 +2,18 @@ from __future__ import annotations
 
 from importlib import import_module
 from pathlib import Path
+from argparse import Namespace
 
 from flask import Flask, render_template, request, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
 # Import the EfficientNet fused predictor, whose filename starts with a number.
-predict_image = import_module("src.13_predict_efficientnet_image").predict_image
+predictor_module = import_module("src.13_predict_efficientnet_image")
+predict_image = predictor_module.predict_image
+load_predictor = predictor_module.load_predictor
+predict_image_details = predictor_module.predict_image_details
+robustness_module = import_module("src.05_robustness_testing")
+TRANSFORM_ARGS = Namespace(crop_fraction=0.9, resize_scale=0.75, jpeg_quality=60)
 
 app = Flask(__name__)
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -21,6 +27,7 @@ def index():
     prediction = None
     confidence = None
     image_url = None
+    robustness_results = None
 
     if request.method == "POST":
         file = request.files.get("image")
@@ -29,8 +36,23 @@ def index():
             image_path = UPLOAD_FOLDER / filename
             file.save(image_path)
             try:
-                prediction, confidence = predict_image(image_path)
-                confidence = f"{confidence * 100:.2f}%"
+                predictor = load_predictor()
+                original = predict_image_details(image_path, predictor=predictor)
+                prediction = original["predicted_class"]
+                confidence = f"{original['confidence'] * 100:.2f}%"
+                if request.form.get("robustness_demo") == "on":
+                    from PIL import Image
+                    with Image.open(image_path) as source:
+                        rgb = source.convert("RGB")
+                    robustness_results = []
+                    for key, display_name, operations in robustness_module.CONDITIONS:
+                        transformed = robustness_module.transform_image(rgb, operations, TRANSFORM_ARGS)
+                        result = predict_image_details(transformed, predictor=predictor)
+                        robustness_results.append({
+                            "condition": display_name,
+                            "prediction": result["predicted_class"],
+                            "confidence": f"{result['confidence'] * 100:.2f}%",
+                        })
                 image_url = url_for("uploaded_file", filename=filename)
             except Exception as exc:
                 prediction = "Error"
@@ -41,6 +63,7 @@ def index():
         prediction=prediction,
         confidence=confidence,
         image_url=image_url,
+        robustness_results=robustness_results,
     )
 
 

@@ -42,6 +42,32 @@
             margin: 22px 0 14px;
         }
 
+        .option {
+            display: flex;
+            gap: 9px;
+            align-items: flex-start;
+            margin: 14px 0;
+            color: #374151;
+            font-size: .95rem;
+        }
+
+        .option input {
+            margin-top: 3px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 16px;
+            border-collapse: collapse;
+            font-size: .92rem;
+        }
+
+        th, td {
+            padding: 9px 7px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
         button {
             padding: 11px 18px;
             border: 0;
@@ -93,6 +119,8 @@
         <p>Upload an image to see whether it is real, AI-generated, or manipulated.</p>
         <form method="POST" enctype="multipart/form-data">
             <input type="file" name="image" accept="image/*" required>
+            <label class="option"><input type="checkbox" name="robustness_demo">
+                Also compare predictions after crop, resize, JPEG compression, and combinations</label>
             <button type="submit">Upload Image</button>
         </form>
         {% if prediction %}
@@ -103,6 +131,17 @@
             {% else %}
             <p><strong>Prediction:</strong> {{ prediction }}</p>
             <p><strong>Confidence:</strong> {{ confidence }}</p>
+            {% if robustness_results %}
+            <h2>Transformation comparison</h2>
+            <table>
+                <thead><tr><th>Version</th><th>Prediction</th><th>Confidence</th></tr></thead>
+                <tbody>
+                    {% for result in robustness_results %}
+                    <tr><td>{{ result.condition }}</td><td>{{ result.prediction }}</td><td>{{ result.confidence }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
             {% endif %}
         </section>
         {% endif %}

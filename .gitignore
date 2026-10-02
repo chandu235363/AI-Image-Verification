@@ -31,3 +31,6 @@ Thumbs.db
 
 # Temporary files
 *.tmp
+
+# Per-image robustness variants are reproducible evaluation artifacts and can be large.
+results/robustness/transformed/

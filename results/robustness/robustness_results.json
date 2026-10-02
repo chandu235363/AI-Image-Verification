@@ -1,0 +1,535 @@
+{
+  "run_timestamp_utc": "2026-10-02T08:51:07+00:00",
+  "model_checkpoint": "results\\efficientnet_fused_best_model.pth",
+  "checkpoint_sha256": "b09f53d3dd5f347ce93f0a3bdd19df5f79e631b650020d76fd55064a17e0e724",
+  "dataset_manifest": "data\\processed\\dataset_manifest.csv",
+  "test_split": "test",
+  "available_test_images": 900,
+  "available_class_counts": {
+    "Real": 300,
+    "AI-Generated": 300,
+    "Manipulated": 300
+  },
+  "sample_size": 300,
+  "sample_class_counts": {
+    "Real": 100,
+    "AI-Generated": 100,
+    "Manipulated": 100
+  },
+  "seed": 42,
+  "classes": [
+    "Real",
+    "AI-Generated",
+    "Manipulated"
+  ],
+  "metric_averaging": "macro",
+  "transformations": {
+    "crop_retained_fraction": 0.9,
+    "resize_scale": 0.75,
+    "jpeg_quality": 60,
+    "combined_operation_order": [
+      "crop",
+      "resize",
+      "jpeg"
+    ]
+  },
+  "strongest_combined_condition": "crop_resize_compression",
+  "results": {
+    "original": {
+      "display_name": "Original",
+      "metrics": {
+        "total": 300,
+        "correct": 268,
+        "accuracy": 0.8933333333333333,
+        "precision_macro": 0.8959882767336182,
+        "recall_macro": 0.8933333333333332,
+        "f1_macro": 0.893476430976431,
+        "per_class": {
+          "Real": {
+            "precision": 0.8272727272727273,
+            "recall": 0.91,
+            "f1": 0.8666666666666667,
+            "support": 100,
+            "correct": 91
+          },
+          "AI-Generated": {
+            "precision": 0.9693877551020408,
+            "recall": 0.95,
+            "f1": 0.9595959595959596,
+            "support": 100,
+            "correct": 95
+          },
+          "Manipulated": {
+            "precision": 0.8913043478260869,
+            "recall": 0.82,
+            "f1": 0.8541666666666666,
+            "support": 100,
+            "correct": 82
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              91,
+              2,
+              7
+            ],
+            [
+              2,
+              95,
+              3
+            ],
+            [
+              17,
+              1,
+              82
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 1.0,
+      "mean_confidence_change": 0.0,
+      "mean_absolute_confidence_change": 0.0,
+      "accuracy_drop_percentage_points": 0.0
+    },
+    "crop": {
+      "display_name": "Crop",
+      "metrics": {
+        "total": 300,
+        "correct": 261,
+        "accuracy": 0.87,
+        "precision_macro": 0.8690410563871452,
+        "recall_macro": 0.87,
+        "f1_macro": 0.8686458904504017,
+        "per_class": {
+          "Real": {
+            "precision": 0.8526315789473684,
+            "recall": 0.81,
+            "f1": 0.8307692307692308,
+            "support": 100,
+            "correct": 81
+          },
+          "AI-Generated": {
+            "precision": 0.8899082568807339,
+            "recall": 0.97,
+            "f1": 0.9282296650717703,
+            "support": 100,
+            "correct": 97
+          },
+          "Manipulated": {
+            "precision": 0.8645833333333334,
+            "recall": 0.83,
+            "f1": 0.8469387755102041,
+            "support": 100,
+            "correct": 83
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              81,
+              8,
+              11
+            ],
+            [
+              1,
+              97,
+              2
+            ],
+            [
+              13,
+              4,
+              83
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 0.91,
+      "mean_confidence_change": -0.0034780720869700115,
+      "mean_absolute_confidence_change": 0.05965531309445699,
+      "accuracy_drop_percentage_points": 2.3333333333333317
+    },
+    "resize": {
+      "display_name": "Resize",
+      "metrics": {
+        "total": 300,
+        "correct": 243,
+        "accuracy": 0.81,
+        "precision_macro": 0.8196967378553056,
+        "recall_macro": 0.81,
+        "f1_macro": 0.8027363983853105,
+        "per_class": {
+          "Real": {
+            "precision": 0.8823529411764706,
+            "recall": 0.6,
+            "f1": 0.7142857142857143,
+            "support": 100,
+            "correct": 60
+          },
+          "AI-Generated": {
+            "precision": 0.8376068376068376,
+            "recall": 0.98,
+            "f1": 0.9032258064516129,
+            "support": 100,
+            "correct": 98
+          },
+          "Manipulated": {
+            "precision": 0.7391304347826086,
+            "recall": 0.85,
+            "f1": 0.7906976744186046,
+            "support": 100,
+            "correct": 85
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              60,
+              12,
+              28
+            ],
+            [
+              0,
+              98,
+              2
+            ],
+            [
+              8,
+              7,
+              85
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 0.85,
+      "mean_confidence_change": -0.010943257212638856,
+      "mean_absolute_confidence_change": 0.10666183392206828,
+      "accuracy_drop_percentage_points": 8.333333333333325
+    },
+    "jpeg_compression": {
+      "display_name": "JPEG Compression",
+      "metrics": {
+        "total": 300,
+        "correct": 246,
+        "accuracy": 0.82,
+        "precision_macro": 0.8435120435120435,
+        "recall_macro": 0.82,
+        "f1_macro": 0.8108350586611456,
+        "per_class": {
+          "Real": {
+            "precision": 0.9333333333333333,
+            "recall": 0.56,
+            "f1": 0.7,
+            "support": 100,
+            "correct": 56
+          },
+          "AI-Generated": {
+            "precision": 0.8818181818181818,
+            "recall": 0.97,
+            "f1": 0.9238095238095239,
+            "support": 100,
+            "correct": 97
+          },
+          "Manipulated": {
+            "precision": 0.7153846153846154,
+            "recall": 0.93,
+            "f1": 0.808695652173913,
+            "support": 100,
+            "correct": 93
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              56,
+              10,
+              34
+            ],
+            [
+              0,
+              97,
+              3
+            ],
+            [
+              4,
+              3,
+              93
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 0.8333333333333334,
+      "mean_confidence_change": -0.009343853493531545,
+      "mean_absolute_confidence_change": 0.09764301826556523,
+      "accuracy_drop_percentage_points": 7.333333333333336
+    },
+    "crop_resize": {
+      "display_name": "Crop + Resize",
+      "metrics": {
+        "total": 300,
+        "correct": 236,
+        "accuracy": 0.7866666666666666,
+        "precision_macro": 0.802319932312563,
+        "recall_macro": 0.7866666666666666,
+        "f1_macro": 0.7737815624942023,
+        "per_class": {
+          "Real": {
+            "precision": 0.8813559322033898,
+            "recall": 0.52,
+            "f1": 0.6540880503144654,
+            "support": 100,
+            "correct": 52
+          },
+          "AI-Generated": {
+            "precision": 0.7777777777777778,
+            "recall": 0.98,
+            "f1": 0.8672566371681416,
+            "support": 100,
+            "correct": 98
+          },
+          "Manipulated": {
+            "precision": 0.7478260869565218,
+            "recall": 0.86,
+            "f1": 0.8,
+            "support": 100,
+            "correct": 86
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              52,
+              21,
+              27
+            ],
+            [
+              0,
+              98,
+              2
+            ],
+            [
+              7,
+              7,
+              86
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 0.82,
+      "mean_confidence_change": -0.0182337482770284,
+      "mean_absolute_confidence_change": 0.1226062383254369,
+      "accuracy_drop_percentage_points": 10.666666666666668
+    },
+    "crop_compression": {
+      "display_name": "Crop + Compression",
+      "metrics": {
+        "total": 300,
+        "correct": 237,
+        "accuracy": 0.79,
+        "precision_macro": 0.8195404335755212,
+        "recall_macro": 0.79,
+        "f1_macro": 0.7772515914636443,
+        "per_class": {
+          "Real": {
+            "precision": 0.9259259259259259,
+            "recall": 0.5,
+            "f1": 0.6493506493506493,
+            "support": 100,
+            "correct": 50
+          },
+          "AI-Generated": {
+            "precision": 0.8508771929824561,
+            "recall": 0.97,
+            "f1": 0.9065420560747663,
+            "support": 100,
+            "correct": 97
+          },
+          "Manipulated": {
+            "precision": 0.6818181818181818,
+            "recall": 0.9,
+            "f1": 0.7758620689655172,
+            "support": 100,
+            "correct": 90
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              50,
+              11,
+              39
+            ],
+            [
+              0,
+              97,
+              3
+            ],
+            [
+              4,
+              6,
+              90
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 0.8033333333333333,
+      "mean_confidence_change": -0.01327935496966044,
+      "mean_absolute_confidence_change": 0.11614463110764821,
+      "accuracy_drop_percentage_points": 10.333333333333329
+    },
+    "resize_compression": {
+      "display_name": "Resize + Compression",
+      "metrics": {
+        "total": 300,
+        "correct": 225,
+        "accuracy": 0.75,
+        "precision_macro": 0.7990613178910008,
+        "recall_macro": 0.75,
+        "f1_macro": 0.7208694651513022,
+        "per_class": {
+          "Real": {
+            "precision": 0.9210526315789473,
+            "recall": 0.35,
+            "f1": 0.5072463768115942,
+            "support": 100,
+            "correct": 35
+          },
+          "AI-Generated": {
+            "precision": 0.8434782608695652,
+            "recall": 0.97,
+            "f1": 0.9023255813953488,
+            "support": 100,
+            "correct": 97
+          },
+          "Manipulated": {
+            "precision": 0.6326530612244898,
+            "recall": 0.93,
+            "f1": 0.7530364372469636,
+            "support": 100,
+            "correct": 93
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              35,
+              14,
+              51
+            ],
+            [
+              0,
+              97,
+              3
+            ],
+            [
+              3,
+              4,
+              93
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 0.75,
+      "mean_confidence_change": -0.006550065676371257,
+      "mean_absolute_confidence_change": 0.1334158076842626,
+      "accuracy_drop_percentage_points": 14.333333333333332
+    },
+    "crop_resize_compression": {
+      "display_name": "Crop + Resize + Compression",
+      "metrics": {
+        "total": 300,
+        "correct": 224,
+        "accuracy": 0.7466666666666667,
+        "precision_macro": 0.7915766052129688,
+        "recall_macro": 0.7466666666666667,
+        "f1_macro": 0.7180489997142557,
+        "per_class": {
+          "Real": {
+            "precision": 0.9230769230769231,
+            "recall": 0.36,
+            "f1": 0.5179856115107914,
+            "support": 100,
+            "correct": 36
+          },
+          "AI-Generated": {
+            "precision": 0.8016528925619835,
+            "recall": 0.97,
+            "f1": 0.8778280542986425,
+            "support": 100,
+            "correct": 97
+          },
+          "Manipulated": {
+            "precision": 0.65,
+            "recall": 0.91,
+            "f1": 0.7583333333333333,
+            "support": 100,
+            "correct": 91
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Real",
+            "AI-Generated",
+            "Manipulated"
+          ],
+          "rows_actual_columns_predicted": [
+            [
+              36,
+              18,
+              46
+            ],
+            [
+              0,
+              97,
+              3
+            ],
+            [
+              3,
+              6,
+              91
+            ]
+          ]
+        }
+      },
+      "prediction_consistency": 0.7533333333333333,
+      "mean_confidence_change": -0.01644638886054357,
+      "mean_absolute_confidence_change": 0.13975627491871515,
+      "accuracy_drop_percentage_points": 14.66666666666666
+    }
+  }
+}

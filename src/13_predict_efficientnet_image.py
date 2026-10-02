@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any, Sequence
 
 import numpy as np
 import torch
@@ -50,10 +51,8 @@ class EfficientNetFused(nn.Module):
         return self.classifier(torch.cat((self.extract_deep_features(images), handcrafted), dim=1))
 
 
-def predict_image(image_path: str | Path) -> tuple[str, float]:
-    path = Path(image_path)
-    if not path.is_file():
-        raise FileNotFoundError(f"Image not found: {path}")
+def load_predictor() -> dict[str, Any]:
+    """Load the trained model and preprocessing state once for repeated inference."""
     if not MODEL_PATH.is_file():
         raise FileNotFoundError(f"EfficientNet fused model not found: {MODEL_PATH}. Run src/12_train_efficientnet_fused.py first.")
     checkpoint = torch.load(MODEL_PATH, map_location="cpu", weights_only=False)
@@ -78,16 +77,56 @@ def predict_image(image_path: str | Path) -> tuple[str, float]:
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
     transform = EfficientNet_B0_Weights.DEFAULT.transforms()
-    with Image.open(path) as source:
-        rgb = source.convert("RGB")
+    return {"model": model, "mean": mean, "scale": scale, "transform": transform}
+
+
+def predict_images_details(
+    images: Sequence[str | Path | Image.Image], predictor: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """Predict a batch with the same feature extraction and transforms as Flask inference."""
+    if predictor is None:
+        predictor = load_predictor()
+    if not images:
+        return []
+    handcrafted_batch, image_batch = [], []
+    for image in images:
+        if isinstance(image, Image.Image):
+            rgb = image.convert("RGB")
+        else:
+            path = Path(image)
+            if not path.is_file():
+                raise FileNotFoundError(f"Image not found: {path}")
+            with Image.open(path) as source:
+                rgb = source.convert("RGB")
         feature_image = preprocess_feature_image(rgb)
         handcrafted = torch.from_numpy(extract_handcrafted_features(np.asarray(feature_image)))
-        handcrafted = ((handcrafted - mean) / scale).unsqueeze(0)
-        tensor = transform(rgb).unsqueeze(0)
+        handcrafted_batch.append((handcrafted - predictor["mean"]) / predictor["scale"])
+        image_batch.append(predictor["transform"](rgb))
+    handcrafted_tensor = torch.stack(handcrafted_batch)
+    image_tensor = torch.stack(image_batch)
     with torch.inference_mode():
-        probabilities = torch.softmax(model(tensor, handcrafted), dim=1)[0]
-    index = int(probabilities.argmax())
-    return LABELS[index], float(probabilities[index])
+        probabilities = torch.softmax(predictor["model"](image_tensor, handcrafted_tensor), dim=1)
+    results = []
+    for probability in probabilities:
+        index = int(probability.argmax())
+        values = [float(value) for value in probability]
+        results.append({
+            "predicted_class": LABELS[index],
+            "confidence": values[index],
+            "probabilities": dict(zip(LABELS, values)),
+        })
+    return results
+
+
+def predict_image_details(image: str | Path | Image.Image, predictor: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Return all class probabilities using the same preprocessing as Flask inference."""
+    return predict_images_details([image], predictor=predictor)[0]
+
+
+def predict_image(image_path: str | Path, predictor: dict[str, Any] | None = None) -> tuple[str, float]:
+    """Keep the existing Flask/CLI API while allowing a cached model for evaluation."""
+    result = predict_image_details(image_path, predictor=predictor)
+    return result["predicted_class"], result["confidence"]
 
 
 if __name__ == "__main__":
