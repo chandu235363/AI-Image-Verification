@@ -1,129 +1,82 @@
-# AI-Based Detection and Verification of Authentic, AI-Generated, and Manipulated Images
+# Image Authenticity Verification
 
-This project classifies images into three classes:
-- Real
-- AI-generated
-- Manipulated
+This project evaluates whether an image is **Real**, **AI-Generated**, or **Manipulated**. It is a three-class research and demonstration system; predictions are model estimates and can be wrong.
 
-It includes:
-- dataset validation and manifest creation
-- an EfficientNet-B0 fused classifier used by the Flask app
-- older ResNet18 baseline and fused training/evaluation scripts for comparison
-- evaluation with accuracy, precision, recall, F1-score, and confusion matrix
-- transformation robustness evaluation for the active EfficientNet-B0 classifier
-- single-image prediction
-- a simple Flask web demo
-- FFT and Haar wavelet feature exploration as a separate module
+## Final production model
 
-## Folder structure
+Flask uses the validated candidate checkpoint:
 
-- data/raw/ - raw dataset folders expected for GenImage, CASIA, and COCO
-- data/processed/ - prepared dataset manifest and intermediate files
-- src/ - project scripts
-- src/features/ - FFT and Haar wavelet feature utilities
-- results/ - saved models and output plots
-- templates/ - Flask web UI templates
+```text
+results/dataset_coverage_improved/efficientnet_fused_robust_balanced_best_model.pth
+```
 
-## Required dataset folders
+The previous checkpoint is retained in this project workspace at `results/efficientnet_fused_robust_best_model.pth` as a backup; it is not needed to run the final model. The production model is an EfficientNet-B0 fused classifier. It combines deep image features with 17 handcrafted features: five FFT statistics, eight Haar wavelet statistics, and four noise/residual statistics. The feature vector is standardized with the training-fitted scaler stored inside the checkpoint and concatenated with EfficientNet features before the three-class classifier.
 
-The project expects these folders to exist before training:
+Raw inference uses RGB conversion, square 224 by 224 LANCZOS resizing, and the same JPEG quality 95 round trip used during dataset preparation. The image transform, FFT, wavelet and residual feature extraction, scaler, and feature concatenation order are shared between training and inference.
 
-- data/raw/genimage
-- data/raw/casia
-- data/raw/coco
+## Measured evaluation
 
-If they are missing, the scripts will report the missing paths instead of inventing data.
+On the held-out evaluation set (901 images), the final candidate achieved **91.56% accuracy**, **91.59% macro F1**, and **89.04% Manipulated-class recall**. The preceding robustness-improved model achieved 90.90% accuracy, 90.86% macro F1, and 81.73% Manipulated recall on the same set.
 
-## Setup
+| Transformation | Final accuracy |
+|---|---:|
+| Original | 91.56% |
+| Crop | 92.34% |
+| Resize | 91.56% |
+| JPEG Compression | 91.12% |
+| Crop + Resize | 91.68% |
+| Crop + Compression | 91.12% |
+| Resize + Compression | 90.57% |
+| Crop + Resize + Compression | 91.23% |
 
-From the project root:
+The model was evaluated for robustness against cropping, resizing, and JPEG compression at the settings documented in `results/dataset_coverage_improved/DATASET_COVERAGE_IMPROVEMENT_REPORT.md`. These measurements describe the held-out set and tested transformations; they do not guarantee results on other images or transformation strengths.
+
+The representative CASIA Tp preparation sampled 2,000 manipulated images from 5,123 readable files across 16 parsed filename groups. Sampling was deterministic and group-aware; train/validation/test splits were made within the groups so represented groups also occur in the test set. The three classes were kept balanced where practical. The manifest records source paths, source and prepared hashes, split, and CASIA provenance. The completed leakage audit found no cross-split duplicate paths or hashes.
+
+The training pipeline used transformation-aware training views for the training split. Validation selected the candidate; the held-out test split was not used for training or checkpoint selection. Preparation and training scripts are retained for reproducibility, but training is not required to run Flask.
+
+## Setup and run Flask
+
+The final checkpoint is approximately 22 MB. It is explicitly exempted from the repository's `*.pth` ignore rule so it can be included in a repository commit. Once the final checkpoint is included in the repository version being shared, a teammate can clone and run it as follows:
 
 ```powershell
-cd "C:\Users\user\OneDrive\Desktop\AI_Image_Verification"
-.\venv\Scripts\Activate.ps1
+git clone https://github.com/chandu235363/AI-Image-Verification.git
+cd AI-Image-Verification
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-## Data preparation
+Confirm that this file exists at the exact path below:
 
-```powershell
-python src/02_prepare_dataset.py
+```text
+results/dataset_coverage_improved/efficientnet_fused_robust_balanced_best_model.pth
 ```
 
-This checks the dataset folders, validates image files, creates labels, and splits them into train/validation/test sets.
+The checkpoint contains the model weights, class mapping, and scaler statistics; no separate scaler file is needed. If the checkpoint is absent from the repository copy, obtain this exact checkpoint from the project owner and put it at that path before starting Flask. Do not substitute the old checkpoint if the goal is to run the final model.
 
-## Training
-
-```powershell
-python src/03_train_baseline.py
-```
-
-## Evaluation
-
-```powershell
-python src/04_evaluate_model.py
-```
-
-## Robustness Evaluation
-
-```powershell
-python src/05_robustness_testing.py --sample-size 300 --seed 42
-```
-
-The evaluation reuses the Flask application's trained EfficientNet-B0 fused predictor and its full preprocessing path: torchvision ImageNet image transforms plus 17 FFT, Haar wavelet, and noise residual features scaled with training-fitted checkpoint statistics. It uses only the existing `test` split in `data/processed/dataset_manifest.csv`; it does not train a model or alter source test images. The default run uses a reproducible class-stratified sample of 300 images to limit saved duplicates. Use `--sample-size 0` to evaluate all available test rows, or choose another positive sample size. `--seed` controls sampling.
-
-Conditions and deterministic operation settings:
-
-- Original image
-- Center crop retaining 90% of image width and height, resized back to the original dimensions with bicubic interpolation
-- Resize degradation: bicubic downsample to 75% of each dimension, then bicubic upsample to the original dimensions
-- JPEG encode/decode at quality 60
-- Each two-operation and three-operation combination; combined order is crop, resize, JPEG
-
-Ground-truth labels remain unchanged for every transformed version. The project manifest uses three classes: Real (the dataset's authentic class), AI-Generated, and Manipulated. Therefore, metrics cover the three-class classifier, not a binary authentic/manipulated classifier. Summary precision, recall, and F1 are macro averages; class-specific scores are also provided. The output records accuracy, confusion matrices, predicted class and all class probabilities per image, prediction consistency against the same image's original prediction, signed confidence change, and accuracy change in percentage points. A negative accuracy drop indicates an increase relative to original.
-
-Transformed sample images, JSON metrics, prediction CSV, plots, and the generated report are saved under `results/robustness/`. The report states the exact sample and per-class counts used. Cropping can remove localized evidence or change image framing; resizing interpolates pixels and can alter high-frequency/noise patterns; JPEG compression quantizes frequency information and may remove forensic traces. This evaluation measures only the stated centered crop, resize scale, and JPEG quality, so results do not guarantee performance for other transformation strengths, sources, or manipulations.
-
-The measured summary from `results/robustness/robustness_results.json` is:
-
-<!-- ROBUSTNESS_RESULTS_START -->
-Sample: 300 of 900 existing test images; 100 per class (seed 42). The following measured metrics are macro averages across the three classes.
-
-| Transformation | Accuracy | Precision | Recall | F1 | Consistency | Mean confidence change (pp) | Accuracy drop (pp) |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Original | 0.8933 | 0.8960 | 0.8933 | 0.8935 | 1.0000 | +0.00 pp | +0.00 pp |
-| Crop | 0.8700 | 0.8690 | 0.8700 | 0.8686 | 0.9100 | -0.35 pp | +2.33 pp |
-| Resize | 0.8100 | 0.8197 | 0.8100 | 0.8027 | 0.8500 | -1.09 pp | +8.33 pp |
-| JPEG Compression | 0.8200 | 0.8435 | 0.8200 | 0.8108 | 0.8333 | -0.93 pp | +7.33 pp |
-| Crop + Resize | 0.7867 | 0.8023 | 0.7867 | 0.7738 | 0.8200 | -1.82 pp | +10.67 pp |
-| Crop + Compression | 0.7900 | 0.8195 | 0.7900 | 0.7773 | 0.8033 | -1.33 pp | +10.33 pp |
-| Resize + Compression | 0.7500 | 0.7991 | 0.7500 | 0.7209 | 0.7500 | -0.66 pp | +14.33 pp |
-| Crop + Resize + Compression | 0.7467 | 0.7916 | 0.7467 | 0.7180 | 0.7533 | -1.64 pp | +14.67 pp |
-<!-- ROBUSTNESS_RESULTS_END -->
-
-The Flask page also has an optional checkbox to show predictions for the uploaded image and all seven transformed versions. Those displayed confidence values are generated by the same active model at request time.
-
-## Single-image prediction
-
-```powershell
-python src/06_predict_one_image.py "path\to\image.jpg"
-```
-
-## Flask web app
+Start the app and open the local URL:
 
 ```powershell
 python app.py
 ```
 
-Then open:
+Open `http://127.0.0.1:5000/`, choose an image, and select **Upload Image**. The result displays the predicted class and confidence. The page also states: “Tested against: Crop • Resize • JPEG Compression”. An internal robustness request option remains available to the route, but the interface stays focused on the single-image result.
 
-```text
-http://127.0.0.1:5000/
-```
+## Unknown-image and difficult-example checks
 
-## Important notes
+A new unknown image was uploaded through Flask. Its SHA-256 was not present in the candidate manifest. The candidate predicted Real at 66.76% confidence; its tested crop, resize, JPEG, and combined transformation variants also predicted Real. This is one inference example, not an independent performance estimate.
 
-- Do not download large datasets automatically.
-- Do not claim successful training or accuracy results without real dataset files.
-- The active fused EfficientNet uses FFT, Haar wavelet, and noise residual features; separate FFT/wavelet exploration utilities are also included.
-- The project is structured for a college-level baseline pipeline, not for production deployment.
+The candidate classified `Tp_S_NNN_S_N_nat20004_nat20004_01508.tif` as Manipulated at 60.32%, and `Tp_S_NRN_S_N_cha00037_cha00037_00357.tif` as Manipulated at 84.52%. It still classified `Tp_S_NRN_S_N_cha10207_cha10207_12340.jpg` as Real at 71.22%. Some manipulated images can still be misclassified; the model does not detect every manipulation.
+
+## Project files
+
+- `app.py` — Flask upload route and production checkpoint selection.
+- `src/13_predict_efficientnet_image.py` — model loading and shared inference preprocessing.
+- `src/features/fused_features.py` — FFT, Haar wavelet, and noise/residual feature extraction.
+- `src/02_prepare_dataset.py` — deterministic dataset preparation and CASIA group sampling.
+- `src/14_train_robust_efficientnet.py` — transformation-aware candidate training procedure.
+- `src/18_evaluate_dataset_coverage_candidate.py` — held-out, subgroup, and robustness evaluation.
+- `results/FINAL_MODEL_REPORT.md` — baseline/candidate results, audit outcome, unknown check, and limitations.
+
+Raw training datasets are not bundled. Training requires the source datasets and is not needed for inference. To run the scripts, install the pinned dependencies from `requirements.txt` in a compatible Python environment.

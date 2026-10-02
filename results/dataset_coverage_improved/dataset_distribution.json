@@ -1,0 +1,250 @@
+{
+  "seed": 20261002,
+  "max_per_class": 2000,
+  "total": 6000,
+  "split_counts": {
+    "train": 4198,
+    "val": 901,
+    "test": 901
+  },
+  "class_counts_by_split": {
+    "train": {
+      "AI-Generated": 1400,
+      "Manipulated": 1398,
+      "Real": 1400
+    },
+    "val": {
+      "AI-Generated": 300,
+      "Manipulated": 301,
+      "Real": 300
+    },
+    "test": {
+      "AI-Generated": 300,
+      "Manipulated": 301,
+      "Real": 300
+    }
+  },
+  "casia_group_counts_by_split": {
+    "train": {
+      "Tp_D_CND": 2,
+      "Tp_D_CNN": 17,
+      "Tp_D_CRD": 9,
+      "Tp_D_CRN": 68,
+      "Tp_D_NND": 9,
+      "Tp_D_NNN": 104,
+      "Tp_D_NRD": 22,
+      "Tp_D_NRN": 275,
+      "Tp_S_CND": 12,
+      "Tp_S_CNN": 138,
+      "Tp_S_CRD": 17,
+      "Tp_S_CRN": 78,
+      "Tp_S_NND": 46,
+      "Tp_S_NNN": 394,
+      "Tp_S_NRD": 37,
+      "Tp_S_NRN": 170
+    },
+    "val": {
+      "Tp_D_CND": 1,
+      "Tp_D_CNN": 4,
+      "Tp_D_CRD": 2,
+      "Tp_D_CRN": 15,
+      "Tp_D_NND": 2,
+      "Tp_D_NNN": 22,
+      "Tp_D_NRD": 5,
+      "Tp_D_NRN": 59,
+      "Tp_S_CND": 2,
+      "Tp_S_CNN": 30,
+      "Tp_S_CRD": 3,
+      "Tp_S_CRN": 16,
+      "Tp_S_NND": 10,
+      "Tp_S_NNN": 85,
+      "Tp_S_NRD": 8,
+      "Tp_S_NRN": 37
+    },
+    "test": {
+      "Tp_D_CND": 1,
+      "Tp_D_CNN": 4,
+      "Tp_D_CRD": 2,
+      "Tp_D_CRN": 15,
+      "Tp_D_NND": 2,
+      "Tp_D_NNN": 22,
+      "Tp_D_NRD": 5,
+      "Tp_D_NRN": 59,
+      "Tp_S_CND": 2,
+      "Tp_S_CNN": 30,
+      "Tp_S_CRD": 3,
+      "Tp_S_CRN": 16,
+      "Tp_S_NND": 10,
+      "Tp_S_NNN": 85,
+      "Tp_S_NRD": 8,
+      "Tp_S_NRN": 37
+    }
+  },
+  "casia_available_readable_unique_group_counts": {
+    "Tp_D_CND": 6,
+    "Tp_D_CNN": 59,
+    "Tp_D_CRD": 29,
+    "Tp_D_CRN": 251,
+    "Tp_D_NND": 29,
+    "Tp_D_NNN": 380,
+    "Tp_D_NRD": 79,
+    "Tp_D_NRN": 1016,
+    "Tp_S_CND": 36,
+    "Tp_S_CNN": 509,
+    "Tp_S_CRD": 54,
+    "Tp_S_CRN": 281,
+    "Tp_S_NND": 167,
+    "Tp_S_NNN": 1463,
+    "Tp_S_NRD": 132,
+    "Tp_S_NRN": 632
+  },
+  "casia_selected_group_counts": {
+    "Tp_D_CND": 4,
+    "Tp_D_CNN": 25,
+    "Tp_D_CRD": 13,
+    "Tp_D_CRN": 98,
+    "Tp_D_NND": 13,
+    "Tp_D_NNN": 148,
+    "Tp_D_NRD": 32,
+    "Tp_D_NRN": 393,
+    "Tp_S_CND": 16,
+    "Tp_S_CNN": 198,
+    "Tp_S_CRD": 23,
+    "Tp_S_CRN": 110,
+    "Tp_S_NND": 66,
+    "Tp_S_NNN": 564,
+    "Tp_S_NRD": 53,
+    "Tp_S_NRN": 244
+  },
+  "available_readable_unique_counts_by_class": {
+    "CASIA_Tp": 5123
+  },
+  "source_format_counts": {
+    "jpg": 4803,
+    "tif": 1197
+  },
+  "source_audit": {
+    "identical_source_files_skipped": 0
+  },
+  "source_group_inspection": {
+    "readable_files": 5123,
+    "unreadable_files": 0,
+    "canonical_grouping": "filename tokens 1 and 2, case-normalized",
+    "available_readable_group_counts": {
+      "Tp_D_CND": 6,
+      "Tp_D_CNN": 59,
+      "Tp_D_CRD": 29,
+      "Tp_D_CRN": 251,
+      "Tp_D_NND": 29,
+      "Tp_D_NNN": 380,
+      "Tp_D_NRD": 79,
+      "Tp_D_NRN": 1016,
+      "Tp_S_CND": 36,
+      "Tp_S_CNN": 509,
+      "Tp_S_CRD": 54,
+      "Tp_S_CRN": 281,
+      "Tp_S_NND": 167,
+      "Tp_S_NNN": 1463,
+      "Tp_S_NRD": 132,
+      "Tp_S_NRN": 632
+    }
+  },
+  "excluded_paths": [
+    "C:\\Users\\user\\OneDrive\\Desktop\\AI_Image_Verification\\data\\raw\\casia\\Tp\\Tp_S_NNN_S_N_nat20004_nat20004_01508.tif",
+    "C:\\Users\\user\\OneDrive\\Desktop\\AI_Image_Verification\\data\\raw\\casia\\Tp\\Tp_S_NRN_S_N_cha00037_cha00037_00357.tif",
+    "C:\\Users\\user\\OneDrive\\Desktop\\AI_Image_Verification\\data\\raw\\casia\\Tp\\Tp_S_NRN_S_N_cha10207_cha10207_12340.jpg"
+  ],
+  "selection": "seeded random Real/AI sample; CASIA Tp proportional allocation by parsed filename group with up to 3-item floor; deterministic within-group sample; per-group 70/15/15 split; case-only variants are coalesced in canonical group reporting while raw filename tokens are retained.",
+  "casia_raw_group_counts_by_split": {
+    "train": {
+      "Tp_D_CND": 2,
+      "Tp_D_CNN": 17,
+      "Tp_D_CRD": 9,
+      "Tp_D_CRN": 68,
+      "Tp_D_NND": 9,
+      "Tp_D_NNN": 104,
+      "Tp_D_NRD": 22,
+      "Tp_D_NRN": 275,
+      "Tp_S_CND": 12,
+      "Tp_S_CNN": 137,
+      "Tp_S_CRD": 17,
+      "Tp_S_CRN": 78,
+      "Tp_S_CnN": 1,
+      "Tp_S_NND": 46,
+      "Tp_S_NNN": 394,
+      "Tp_S_NRD": 37,
+      "Tp_S_NRN": 170
+    },
+    "val": {
+      "Tp_D_CND": 1,
+      "Tp_D_CNN": 4,
+      "Tp_D_CRD": 2,
+      "Tp_D_CRN": 15,
+      "Tp_D_NND": 2,
+      "Tp_D_NNN": 22,
+      "Tp_D_NRD": 5,
+      "Tp_D_NRN": 59,
+      "Tp_S_CND": 2,
+      "Tp_S_CNN": 30,
+      "Tp_S_CRD": 3,
+      "Tp_S_CRN": 16,
+      "Tp_S_NND": 10,
+      "Tp_S_NNN": 85,
+      "Tp_S_NRD": 8,
+      "Tp_S_NRN": 37
+    },
+    "test": {
+      "Tp_D_CND": 1,
+      "Tp_D_CNN": 4,
+      "Tp_D_CRD": 2,
+      "Tp_D_CRN": 15,
+      "Tp_D_NND": 2,
+      "Tp_D_NNN": 22,
+      "Tp_D_NRD": 5,
+      "Tp_D_NRN": 59,
+      "Tp_S_CND": 2,
+      "Tp_S_CNN": 30,
+      "Tp_S_CRD": 3,
+      "Tp_S_CRN": 16,
+      "Tp_S_NND": 10,
+      "Tp_S_NNN": 85,
+      "Tp_S_NRD": 8,
+      "Tp_S_NRN": 37
+    }
+  },
+  "casia_source_inventory": {
+    "raw_supported_files": 5123,
+    "readable_total": 5123,
+    "unreadable_supported_files": 0,
+    "canonical_group_counts": {
+      "Tp_D_CND": 6,
+      "Tp_D_CNN": 59,
+      "Tp_D_CRD": 29,
+      "Tp_D_CRN": 251,
+      "Tp_D_NND": 29,
+      "Tp_D_NNN": 380,
+      "Tp_D_NRD": 79,
+      "Tp_D_NRN": 1016,
+      "Tp_S_CND": 36,
+      "Tp_S_CNN": 509,
+      "Tp_S_CRD": 54,
+      "Tp_S_CRN": 281,
+      "Tp_S_NND": 167,
+      "Tp_S_NNN": 1463,
+      "Tp_S_NRD": 132,
+      "Tp_S_NRN": 632
+    }
+  },
+  "source_format_counts_by_class": {
+    "Real": {
+      "jpg": 2000
+    },
+    "AI-Generated": {
+      "jpg": 2000
+    },
+    "Manipulated": {
+      "jpg": 803,
+      "tif": 1197
+    }
+  }
+}

@@ -16,6 +16,7 @@ try:
         FEATURE_COUNT,
         FEATURE_IMAGE_SIZE,
         extract_handcrafted_features,
+        preprocess_dataset_image,
         preprocess_feature_image,
     )
 except ModuleNotFoundError:
@@ -23,6 +24,7 @@ except ModuleNotFoundError:
         FEATURE_COUNT,
         FEATURE_IMAGE_SIZE,
         extract_handcrafted_features,
+        preprocess_dataset_image,
         preprocess_feature_image,
     )
 
@@ -51,11 +53,14 @@ class EfficientNetFused(nn.Module):
         return self.classifier(torch.cat((self.extract_deep_features(images), handcrafted), dim=1))
 
 
-def load_predictor() -> dict[str, Any]:
+def load_predictor(model_path: str | Path | None = None) -> dict[str, Any]:
     """Load the trained model and preprocessing state once for repeated inference."""
-    if not MODEL_PATH.is_file():
-        raise FileNotFoundError(f"EfficientNet fused model not found: {MODEL_PATH}. Run src/12_train_efficientnet_fused.py first.")
-    checkpoint = torch.load(MODEL_PATH, map_location="cpu", weights_only=False)
+    checkpoint_path = Path(model_path) if model_path is not None else MODEL_PATH
+    if not checkpoint_path.is_absolute():
+        checkpoint_path = ROOT / checkpoint_path
+    if not checkpoint_path.is_file():
+        raise FileNotFoundError(f"EfficientNet fused model not found: {checkpoint_path}. Run the matching training script first.")
+    checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     if checkpoint.get("architecture") != "torchvision.efficientnet_b0":
         raise ValueError("Checkpoint architecture is not EfficientNet-B0.")
     deep_dim = int(checkpoint.get("deep_feature_dim", 0))
@@ -77,13 +82,15 @@ def load_predictor() -> dict[str, Any]:
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
     transform = EfficientNet_B0_Weights.DEFAULT.transforms()
-    return {"model": model, "mean": mean, "scale": scale, "transform": transform}
+    return {"model": model, "mean": mean, "scale": scale, "transform": transform,
+            "model_path": checkpoint_path}
 
 
 def predict_images_details(
     images: Sequence[str | Path | Image.Image], predictor: dict[str, Any] | None = None,
+    already_prepared: bool = False,
 ) -> list[dict[str, Any]]:
-    """Predict a batch with the same feature extraction and transforms as Flask inference."""
+    """Predict a batch; raw inputs first follow the dataset's RGB/224/LANCZOS/JPEG-q95 convention."""
     if predictor is None:
         predictor = load_predictor()
     if not images:
@@ -98,6 +105,8 @@ def predict_images_details(
                 raise FileNotFoundError(f"Image not found: {path}")
             with Image.open(path) as source:
                 rgb = source.convert("RGB")
+        if not already_prepared:
+            rgb = preprocess_dataset_image(rgb)
         feature_image = preprocess_feature_image(rgb)
         handcrafted = torch.from_numpy(extract_handcrafted_features(np.asarray(feature_image)))
         handcrafted_batch.append((handcrafted - predictor["mean"]) / predictor["scale"])
@@ -118,9 +127,10 @@ def predict_images_details(
     return results
 
 
-def predict_image_details(image: str | Path | Image.Image, predictor: dict[str, Any] | None = None) -> dict[str, Any]:
+def predict_image_details(image: str | Path | Image.Image, predictor: dict[str, Any] | None = None,
+                          already_prepared: bool = False) -> dict[str, Any]:
     """Return all class probabilities using the same preprocessing as Flask inference."""
-    return predict_images_details([image], predictor=predictor)[0]
+    return predict_images_details([image], predictor=predictor, already_prepared=already_prepared)[0]
 
 
 def predict_image(image_path: str | Path, predictor: dict[str, Any] | None = None) -> tuple[str, float]:

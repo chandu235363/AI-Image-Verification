@@ -18,6 +18,7 @@ data/processed/
 *.pt
 *.ckpt
 .torch_cache/
+!results/dataset_coverage_improved/efficientnet_fused_robust_balanced_best_model.pth
 
 # Local environment variables and secrets
 .env

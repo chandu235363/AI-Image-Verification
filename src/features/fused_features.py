@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import io
 
 import cv2
 import numpy as np
@@ -10,6 +11,19 @@ from PIL import Image
 
 FEATURE_COUNT = 17
 FEATURE_IMAGE_SIZE = 224
+DATASET_JPEG_QUALITY = 95
+
+
+def preprocess_dataset_image(image: Image.Image) -> Image.Image:
+    """Match preparation exactly: RGB, square LANCZOS resize, JPEG q95 roundtrip."""
+    image = image.convert("RGB").resize(
+        (FEATURE_IMAGE_SIZE, FEATURE_IMAGE_SIZE), Image.Resampling.LANCZOS
+    )
+    encoded = io.BytesIO()
+    image.save(encoded, format="JPEG", quality=DATASET_JPEG_QUALITY)
+    encoded.seek(0)
+    with Image.open(encoded) as decoded:
+        return decoded.convert("RGB").copy()
 
 
 def preprocess_feature_image(image: Image.Image) -> Image.Image:

@@ -17,6 +17,7 @@ TRANSFORM_ARGS = Namespace(crop_fraction=0.9, resize_scale=0.75, jpeg_quality=60
 
 app = Flask(__name__)
 PROJECT_ROOT = Path(__file__).resolve().parent
+ACTIVE_MODEL_CHECKPOINT = PROJECT_ROOT / "results/dataset_coverage_improved/efficientnet_fused_robust_balanced_best_model.pth"
 UPLOAD_FOLDER = PROJECT_ROOT / "data/uploads"
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = str(UPLOAD_FOLDER)
@@ -36,7 +37,7 @@ def index():
             image_path = UPLOAD_FOLDER / filename
             file.save(image_path)
             try:
-                predictor = load_predictor()
+                predictor = load_predictor(ACTIVE_MODEL_CHECKPOINT)
                 original = predict_image_details(image_path, predictor=predictor)
                 prediction = original["predicted_class"]
                 confidence = f"{original['confidence'] * 100:.2f}%"

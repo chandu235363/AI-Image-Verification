@@ -1,0 +1,116 @@
+{
+  "started_or_completed_utc": "2026-10-02T11:45:47+00:00",
+  "initial_checkpoint": "results\\efficientnet_fused_robust_best_model.pth",
+  "baseline_checkpoint_sha256": "041ecdf6b8ac9e585cf7f712147f5e89c5e908f9593097f9efc806215c4a20db",
+  "new_checkpoint": "results\\dataset_coverage_improved\\efficientnet_fused_robust_balanced_best_model.pth",
+  "architecture": "torchvision.efficientnet_b0",
+  "class_counts_by_split": {
+    "train": {
+      "Real": 1400,
+      "AI-Generated": 1400,
+      "Manipulated": 1398
+    },
+    "val": {
+      "Real": 300,
+      "AI-Generated": 300,
+      "Manipulated": 301
+    },
+    "test": {
+      "Real": 300,
+      "AI-Generated": 300,
+      "Manipulated": 301
+    }
+  },
+  "data_leakage_check": "manifest paths, source hashes when supplied, and prepared image hashes checked across train/val/test",
+  "validation_original_baseline": {
+    "loss": 0.23107249661840779,
+    "accuracy": 0.9278579356270811
+  },
+  "selected_epoch": 1,
+  "selected_validation_accuracy": 0.951165371809101,
+  "test_rows_used_for_training_or_selection": 0,
+  "training_views": {
+    "original": 4198,
+    "augmented": 4198
+  },
+  "augmentation_config": {
+    "seed": 20261002,
+    "independent_probabilities": {
+      "crop": 0.45,
+      "resize": 0.45,
+      "jpeg": 0.45
+    },
+    "crop_scale_min": 0.85,
+    "resize_scale_range": [
+      0.7,
+      0.95
+    ],
+    "jpeg_quality_choices": [
+      60,
+      70,
+      80,
+      90
+    ],
+    "train_augmentation_operation_counts": {
+      "augmented_views": 4198,
+      "crop": 1852,
+      "jpeg_q80": 442,
+      "resize": 1887,
+      "multi_operation_views": 1737,
+      "jpeg_q70": 501,
+      "unmodified_aug_view": 704,
+      "jpeg_q60": 440,
+      "jpeg_q90": 471
+    },
+    "original_views_retained": true
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.2055093140215775,
+        "accuracy": 0.9260362077179609
+      },
+      "validation": {
+        "loss": 0.1708409935365184,
+        "accuracy": 0.951165371809101
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.08520970757732992,
+        "accuracy": 0.9715340638399238
+      },
+      "validation": {
+        "loss": 0.17387437887660864,
+        "accuracy": 0.9445061043285239
+      }
+    }
+  ],
+  "training_command_parameters": {
+    "manifest_path": "results\\dataset_coverage_improved\\new_manifest.csv",
+    "initial_checkpoint": "results\\efficientnet_fused_robust_best_model.pth",
+    "output_checkpoint": "results\\dataset_coverage_improved\\efficientnet_fused_robust_balanced_best_model.pth",
+    "output_dir": "results\\dataset_coverage_improved",
+    "seed": 20261002,
+    "epochs": 2,
+    "patience": 2,
+    "batch_size": 16,
+    "feature_batch_size": 16,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "crop_probability": 0.45,
+    "resize_probability": 0.45,
+    "jpeg_probability": 0.45,
+    "crop_scale_min": 0.85,
+    "resize_scale_min": 0.7,
+    "resize_scale_max": 0.95,
+    "jpeg_qualities": [
+      60,
+      70,
+      80,
+      90
+    ]
+  }
+}

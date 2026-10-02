@@ -55,19 +55,6 @@
             margin-top: 3px;
         }
 
-        table {
-            width: 100%;
-            margin-top: 16px;
-            border-collapse: collapse;
-            font-size: .92rem;
-        }
-
-        th, td {
-            padding: 9px 7px;
-            border-bottom: 1px solid #e5e7eb;
-            text-align: left;
-        }
-
         button {
             padding: 11px 18px;
             border: 0;
@@ -84,9 +71,45 @@
 
         .result {
             margin-top: 26px;
-            padding: 20px;
-            background: #f8fafc;
+            padding: 22px;
             border-radius: 10px;
+        }
+
+        .result-real {
+            color: #166534;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .result-ai-generated {
+            color: #5b21b6;
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+        }
+
+        .result-manipulated {
+            color: #9a3412;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+        }
+
+        .result-heading {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+            letter-spacing: .02em;
+        }
+
+        .confidence {
+            margin: 0;
+            color: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .robustness-note {
+            margin: 12px 0 0;
+            color: #5b6472;
+            font-size: .9rem;
         }
 
         .preview {
@@ -119,8 +142,6 @@
         <p>Upload an image to see whether it is real, AI-generated, or manipulated.</p>
         <form method="POST" enctype="multipart/form-data">
             <input type="file" name="image" accept="image/*" required>
-            <label class="option"><input type="checkbox" name="robustness_demo">
-                Also compare predictions after crop, resize, JPEG compression, and combinations</label>
             <button type="submit">Upload Image</button>
         </form>
         {% if prediction %}
@@ -129,19 +150,23 @@
             {% if prediction == "Error" %}
             <p class="error"><strong>Error:</strong> {{ confidence }}</p>
             {% else %}
-            <p><strong>Prediction:</strong> {{ prediction }}</p>
-            <p><strong>Confidence:</strong> {{ confidence }}</p>
-            {% if robustness_results %}
-            <h2>Transformation comparison</h2>
-            <table>
-                <thead><tr><th>Version</th><th>Prediction</th><th>Confidence</th></tr></thead>
-                <tbody>
-                    {% for result in robustness_results %}
-                    <tr><td>{{ result.condition }}</td><td>{{ result.prediction }}</td><td>{{ result.confidence }}</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% if prediction == "Real" %}
+            <div class="result result-real">
+                <h2 class="result-heading">REAL IMAGE</h2>
+                <p class="confidence">Confidence: {{ confidence }}</p>
+            </div>
+            {% elif prediction == "AI-Generated" %}
+            <div class="result result-ai-generated">
+                <h2 class="result-heading">AI-GENERATED IMAGE</h2>
+                <p class="confidence">Confidence: {{ confidence }}</p>
+            </div>
+            {% elif prediction in ["Manipulated", "Edited/Manipulated"] %}
+            <div class="result result-manipulated">
+                <h2 class="result-heading">MANIPULATED IMAGE</h2>
+                <p class="confidence">Confidence: {{ confidence }}</p>
+            </div>
             {% endif %}
+            <p class="robustness-note">Tested against: Crop &#8226; Resize &#8226; JPEG Compression</p>
             {% endif %}
         </section>
         {% endif %}

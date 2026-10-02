@@ -333,7 +333,9 @@ def evaluate(args) -> dict[str, Any]:
             condition_images.append(transformed)
         results_for_condition = []
         for start in range(0, len(condition_images), 32):
-            batch_results = predict_images_details(condition_images[start:start + 32], predictor=predictor)
+            # Manifest entries already went through dataset RGB/224/JPEG-q95 preparation.
+            batch_results = predict_images_details(condition_images[start:start + 32], predictor=predictor,
+                                                   already_prepared=True)
             results_for_condition.extend(batch_results)
             processed = min(start + 32, len(condition_images))
             if processed % 50 < 32 or processed == len(condition_images):
